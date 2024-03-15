@@ -49,9 +49,16 @@ function App() {
                                         <Text className="block">
                                             Description: {x.description}
                                         </Text>
-                                        <Link href={`${import.meta.env.VITE_opensea}/${x.edition}`} target="_blank">
-                                            View on OpenSea
-                                        </Link>
+                                        <flex align="center" display="flex" direction="row" gap="8">
+                                            <div>
+                                                <Link href={`${import.meta.env.VITE_opensea}/${x.edition}`} target="_blank">
+                                                    View on OpenSea
+                                                </Link>
+                                            </div>
+                                            <div>
+                                                <Transfer tokenId={x.edition}/>
+                                            </div>
+                                        </flex>
                                     </Box>
                                 ))
                             )}
