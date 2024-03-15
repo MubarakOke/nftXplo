@@ -1,20 +1,30 @@
-import { Box, Button, Container, Flex, Text } from "@radix-ui/themes";
+import { Box, Button, Container, Flex, Text, Link } from "@radix-ui/themes";
 import { configureWeb3Modal } from "./connection";
 import "@radix-ui/themes/styles.css";
 import Header from "./component/Header";
 import AppTabs from "./component/AppTabs";
+import Mint from "./component/Mint";
+import Transfer from "./component/Transfer";
 import useCollections from "./hooks/useCollections";
-import useMyNfts from "./hooks/useMyNfts";
+import useOwnedNfts from "./hooks/useOwnedNfts";
 
 configureWeb3Modal();
 
 function App() {
     const tokensData = useCollections();
-    const myTokenIds = useMyNfts();
+    let [myTokenIds, otherTokenIds, otherUserTokenIdMappping] = useOwnedNfts();
+
 
     const myTokensData = tokensData.filter((x, index) =>
         myTokenIds.includes(index)
     );
+
+    const allTokenData = tokensData.map((collection, index)=>({
+        ...collection,
+        isMyCollection: myTokenIds.includes(index),
+        isOtherCollection: otherTokenIds.includes(index)
+    }))
+
     return (
         <Container>
             <Header />
@@ -38,9 +48,9 @@ function App() {
                                         <Text className="block">
                                             Description: {x.description}
                                         </Text>
-                                        <Button className="px-8 py-2 text-xl mt-2">
-                                            Mint
-                                        </Button>
+                                        <Link href={`${import.meta.env.VITE_opensea}/${x.edition}`} target="_blank">
+                                            View on OpenSea
+                                        </Link>
                                     </Box>
                                 ))
                             )}
@@ -51,7 +61,7 @@ function App() {
                             {tokensData.length === 0 ? (
                                 <Text>Loading...</Text>
                             ) : (
-                                tokensData.map((x) => (
+                                allTokenData.map((x, item) => (
                                     <Box key={x.dna} className="w-[20rem]">
                                         <img
                                             src={x.image}
@@ -64,9 +74,39 @@ function App() {
                                         <Text className="block">
                                             Description: {x.description}
                                         </Text>
-                                        <Button className="px-8 py-2 text-xl mt-2">
-                                            Mint
-                                        </Button>
+                                        {
+                                            x.isMyCollection?
+                                            (
+                                                <flex align="center" display="flex" direction="row" gap="8">
+                                                    <div>
+                                                        <Link href={`${import.meta.env.VITE_opensea}/${x.edition}`} target="_blank">
+                                                            View on OpenSea
+                                                        </Link>
+                                                    </div>
+                                                    <div>
+                                                        <Transfer />
+                                                    </div>
+                                                </flex>
+                                            ):
+                                            (
+                                                x.isOtherCollection ? (
+                                                    <flex>
+                                                        <div>
+                                                            <Link href={`${import.meta.env.VITE_opensea}/${x.edition}`} target="_blank">
+                                                                    View on OpenSea
+                                                            </Link>
+                                                        </div>
+                                                        <div>
+                                                            {`${otherUserTokenIdMappping[x.edition][0].slice(0,8)}...${otherUserTokenIdMappping[x.edition][0].slice(35,-1)}`}
+                                                        </div>
+                                                    </flex>
+                                                    ):(
+                                                    (
+                                                        <Mint />
+                                                    )
+                                                )
+                                            )
+                                        }
                                     </Box>
                                 ))
                             )}

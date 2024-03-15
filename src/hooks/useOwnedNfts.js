@@ -5,10 +5,12 @@ import { readOnlyProvider } from "../constants/providers";
 import { useEffect, useMemo, useState } from "react";
 import { useWeb3ModalAccount } from "@web3modal/ethers/react";
 
-const useOwnedNfts = () => {
+const useMyNfts = () => {
     const { address } = useWeb3ModalAccount();
     const [data, setData] = useState([]);
     const [otherData, setOtherData] = useState([])
+    const [otherUserTokenIdMappping, setOtherUserTokenIdMappping] = useState({})
+
     const tokenIDs = useMemo(
         () => [...Array.from({ length: 30 })].map((_, index) => index),
         []
@@ -48,18 +50,23 @@ const useOwnedNfts = () => {
 
             const ownedTokenIds = [];
             const otherUserOwnedTokenIds = []
+            let _otherUserTokenIdMappping = {}
 
             decodedResponses.forEach((addr, index) => {
                 if (String(addr).toLowerCase() === String(address).toLowerCase()){ownedTokenIds.push(validResponsesIndex[index])}
-                else{otherUserOwnedTokenIds.push(validResponsesIndex[index])};
+                else{
+                    otherUserOwnedTokenIds.push(validResponsesIndex[index]);
+                    _otherUserTokenIdMappping= {..._otherUserTokenIdMappping, [validResponsesIndex[index]]: addr}
+                };
             });
 
             setData(ownedTokenIds);
             setOtherData(otherUserOwnedTokenIds)
+            setOtherUserTokenIdMappping({..._otherUserTokenIdMappping})
         })();
     }, [address, tokenIDs]);
 
-    return data, otherData;
+    return [data, otherData, otherUserTokenIdMappping];
 };
 
-export default useOwnedNfts;
+export default useMyNfts;
