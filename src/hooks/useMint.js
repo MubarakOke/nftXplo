@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { isSupportedChain } from "../utils";
 import { getProvider } from "../constants/providers";
+import toast from 'react-hot-toast';
 import {
     useWeb3ModalAccount,
     useWeb3ModalProvider,
@@ -19,23 +20,21 @@ const useMint = () => {
             const signer = await readWriteProvider.getSigner();
 
             const contract = getNFTContract(signer);
-
+            const toastId= toast.loading('Minting...');
             try {
-                const transaction = await contract.safeMint(address, tokenId, {value:"100000000000000"});
+                const transaction = await contract.safeMint(address, tokenId, {value:"1000000000000000"});
                 console.log("transaction: ", transaction);
                 const receipt = await transaction.wait();
 
-                console.log("receipt: ", receipt);
-
+                toast.remove(toastId)
                 if (receipt.status) {
-                    return console.log("Mint successfull");
+                    toast.success(`Minting successful!`);
                 }
 
                 console.log("Failed to mint");
             } catch (error) {
-                console.log(error);
-
-                console.error("error: ", error);
+                toast.remove(toastId)
+                toast.error(`Minting failed! ${error.reason}`)
             }
         },
         [chainId, walletProvider]

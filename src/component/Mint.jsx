@@ -3,13 +3,13 @@ import { isAddress } from "ethers";
 import useMint from "../hooks/useMint"
 import { useState } from "react";
 
-const Mint=()=>{
+const Mint=({tokenId})=>{
     const [address, setAddress] = useState("");
-    const mint = useMint();
+    const mintNFT = useMint();
 
     const handleMint = (address, tokenId) => {
         if (!isAddress(address)) {return;}
-        mint(address, tokenId);
+        mintNFT(address, tokenId);
     }
 
     return(
@@ -48,7 +48,7 @@ const Mint=()=>{
                         </Dialog.Close>
                         <Dialog.Close>
                             <Button className="button" onClick={() => {
-                                handleMint(address, index)
+                                handleMint(address, tokenId)
                             }}>Mint</Button>
                         </Dialog.Close>
                     </Flex>

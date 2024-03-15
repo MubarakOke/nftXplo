@@ -5,6 +5,7 @@ import {
     useWeb3ModalAccount,
     useWeb3ModalProvider,
 } from "@web3modal/ethers/react";
+import toast from 'react-hot-toast';
 import { getNFTContract } from "../constants/contracts";
 
 const useTransfer = () => {
@@ -20,23 +21,21 @@ const useTransfer = () => {
             const signer = await readWriteProvider.getSigner();
 
             const contract = getNFTContract(signer);
-
+            const toastId= toast.loading('Transferring...');
             try {
                 const transaction = await contract.transferFrom(address, addressTo, tokenId);
                 console.log("transaction: ", transaction);
                 const receipt = await transaction.wait();
 
-                console.log("receipt: ", receipt);
-
+                toast.remove(toastId)
                 if (receipt.status) {
-                    return console.log("Transfer successfull");
+                    toast.success(`Transfer successful!`);
                 }
 
                 console.log("Failed to Transfer");
             } catch (error) {
-                console.log(error);
-
-                console.error("error: ", error);
+                toast.remove(toastId)
+                toast.error(`Minting failed! ${error.reason}`)
             }
         },
         [chainId, walletProvider]

@@ -6,6 +6,7 @@ import AppTabs from "./component/AppTabs";
 import Mint from "./component/Mint";
 import Transfer from "./component/Transfer";
 import useCollections from "./hooks/useCollections";
+import { Toaster } from 'react-hot-toast';
 import useOwnedNfts from "./hooks/useOwnedNfts";
 
 configureWeb3Modal();
@@ -84,7 +85,7 @@ function App() {
                                                         </Link>
                                                     </div>
                                                     <div>
-                                                        <Transfer />
+                                                        <Transfer tokenId={x.edition}/>
                                                     </div>
                                                 </flex>
                                             ):
@@ -102,7 +103,7 @@ function App() {
                                                     </flex>
                                                     ):(
                                                     (
-                                                        <Mint />
+                                                        <Mint tokenId={x.edition} />
                                                     )
                                                 )
                                             )
@@ -114,6 +115,7 @@ function App() {
                     }
                 />
             </main>
+            <Toaster />
         </Container>
     );
 }

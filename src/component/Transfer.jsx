@@ -3,7 +3,7 @@ import { isAddress } from "ethers";
 import useTransfer from "../hooks/useTransfer"
 import { useState } from "react";
 
-const Transfer=()=>{
+const Transfer=({tokenId})=>{
     const [addressTo, setAddressTo] = useState("");
 
     const transfer = useTransfer();
@@ -49,7 +49,7 @@ const Transfer=()=>{
                         </Dialog.Close>
                         <Dialog.Close>
                             <Button className="button" onClick={() => {
-                                handleTransfer(addressTo, index)
+                                handleTransfer(addressTo, tokenId)
                             }}>Transfer</Button>
                         </Dialog.Close>
                     </Flex>
